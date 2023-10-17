@@ -16,4 +16,4 @@ export default function App() {
   );
 }
 
-//HOURS SO FAR = 6:25
+//HOURS SO FAR = 8:05

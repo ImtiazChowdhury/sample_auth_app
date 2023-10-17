@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Alert, FlatList, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, FlatList, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useDispatch } from 'react-redux'
 import styles from "./UploadImageCss"
 import * as MediaLibrary from 'expo-media-library'
@@ -31,7 +31,12 @@ function UploadImage({ navigation, route }) {
     const [albumList, setAlbumList] = useState([]);
 
     async function getAlbumList() {
-        const response = await MediaLibrary.getAlbumsAsync()
+        let response;
+        try {
+            response = await MediaLibrary.getAlbumsAsync()
+        } catch (err) {
+            return Alert.alert("Could not get album list", "Something went wrong!")
+        }
         if (!response) return;
 
         const allPhotoAlbum = {
@@ -45,7 +50,14 @@ function UploadImage({ navigation, route }) {
         // not the best approach, but expo media library doesn't provide a better way
         // as a side benefit, we will get the cover photo for each album
         for (let album of response) {
-            const assetList = await MediaLibrary.getAssetsAsync({ album: album.id, mediaType: MediaLibrary.MediaType.photo })
+            let assetList;
+            try {
+                assetList = await MediaLibrary.getAssetsAsync({ album: album.id, mediaType: MediaLibrary.MediaType.photo })
+            } catch (err) {
+                console.log(err)
+                Alert.alert("Could not get photo list", "Something went wrong!")
+                continue;
+            }
             album.photoCount = assetList?.totalCount || 0;
             album.coverPhoto = assetList?.assets && assetList?.assets[0]
 
@@ -87,11 +99,17 @@ function UploadImage({ navigation, route }) {
     const [loadingMoreAsset, setLoadingMoreAsset] = useState(false);
     async function getSingleAlbumAssets(albumId) {
         setLoadingAsset(true);
-        const response = await MediaLibrary.getAssetsAsync({
-            album: albumId,
-            mediaType: MediaLibrary.MediaType.photo,
-            first: 21
-        })
+        let response;
+        try {
+            response = await MediaLibrary.getAssetsAsync({
+                album: albumId,
+                mediaType: MediaLibrary.MediaType.photo,
+                first: 21
+            })
+        } catch (err) {
+            return Alert.alert("Could not get photos", "Something went wrong!")
+
+        }
         setAssetList(response?.assets)
         setAssetResponse(response)
         setLoadingAsset(false)
@@ -101,13 +119,18 @@ function UploadImage({ navigation, route }) {
 
         if (assetResponse?.hasNextPage && !loadingMoreAsset) {
             setLoadingMoreAsset(true);
+            let response;
+            try {
 
-            const response = await MediaLibrary.getAssetsAsync({
-                album: albumId,
-                mediaType: MediaLibrary.MediaType.photo,
-                first: 21,
-                after: assetResponse.endCursor,
-            })
+                response = await MediaLibrary.getAssetsAsync({
+                    album: albumId,
+                    mediaType: MediaLibrary.MediaType.photo,
+                    first: 21,
+                    after: assetResponse.endCursor,
+                })
+            } catch (err) {
+                return Alert.alert("Could not get photos", "Something went wrong!")
+            }
             setAssetList(p => [...p, ...response?.assets])
             setAssetResponse(response)
             setLoadingMoreAsset(false)
@@ -148,6 +171,8 @@ function UploadImage({ navigation, route }) {
         navigation.navigate("Profile")
     }, [selectedAssets])
 
+    const itemHeight = (Dimensions.get("window").width / 3 - 10) / 0.7 + 6;
+
     return (
         <>
             <View style={styles.wrapper}>
@@ -161,11 +186,13 @@ function UploadImage({ navigation, route }) {
                         contentContainerStyle={styles.assetGrid}
                         numColumns={3}
                         showsVerticalScrollIndicator={false}
+                        initialNumToRender={21}
+                        getItemLayout={(item, index) => ({ length: itemHeight, offset: (itemHeight) * index, index })}
                         renderItem={({ item }) => (
                             <UploadImageCard
                                 asset={item}
                                 toggleSelection={toggleSelection}
-                                selectedAssets={selectedAssets}
+                                selectedIndex={selectedAssets.indexOf(item.uri)}
                             />
                         )}
                         ListHeaderComponent={
