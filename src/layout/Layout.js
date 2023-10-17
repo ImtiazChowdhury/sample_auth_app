@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { selectIsLoggedIn } from '../store/authSlice';
 import { Text, View } from 'react-native';
 import ProfileScreen from '../screen/profile/Profile';
+import UploadImage from '../screen/uploadImage/UploadImage';
 
 const ProfileStack = createNativeStackNavigator()
 const AuthStack = createNativeStackNavigator()
@@ -22,13 +23,14 @@ function ProfileStackComponent({ }) {
     return (
         <ProfileStack.Navigator initialRouteName='Profile'>
             <ProfileStack.Screen name="Profile" component={ProfileScreen} options={{ title: "Loading ..." }} />
+            <ProfileStack.Screen name="UploadImage" component={UploadImage} options={{ title: "Upload Image" }} />
         </ProfileStack.Navigator>
     )
 }
 
 function Layout({ }) {
     const isLoggedIn = useSelector(selectIsLoggedIn)
-    useEffect(()=>{console.log({isLoggedIn})}, [isLoggedIn])
+
     return (
         <NavigationContainer>
             {isLoggedIn ? <ProfileStackComponent /> : <AuthStackComponent />}

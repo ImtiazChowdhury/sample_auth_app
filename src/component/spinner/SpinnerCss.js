@@ -12,7 +12,8 @@ const spinnerCss = StyleSheet.create({
         alignItems: "center",
         zIndex: 10,
         backgroundColor: "#fff3",
-        paddingBottom: 100
+        paddingBottom: 100,
+        
     },
     gifBox: {
         backgroundColor: "#fff7",

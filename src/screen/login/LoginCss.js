@@ -1,9 +1,8 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import uiColors from "../../config/uiColors";
 
 const LoginCss = StyleSheet.create({
     wrapper: {
-        flex: 1,
         justifyContent: "space-between",
         backgroundColor: uiColors.white,
         paddingHorizontal: 5
@@ -12,6 +11,8 @@ const LoginCss = StyleSheet.create({
     container: {
         paddingVertical: 0,
         paddingHorizontal: 5,
+        minHeight: Dimensions.get("window").height
+
     },
     avatarContainer: {
         marginTop: 50,

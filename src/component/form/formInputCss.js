@@ -11,12 +11,14 @@ const formInputCss = StyleSheet.create({
     },
     textInput: {
         borderWidth: 1,
-        borderColor: uiColors.primaryColor,
+        borderColor: uiColors.gray1100,
         borderRadius: 5,
         height: 48,
         marginTop: 5,
         fontSize: 18,
-        paddingHorizontal: 5,
+        paddingHorizontal: 10,
+        color: uiColors.primaryColor,
+        letterSpacing: 1
     },
     error:{
         flexDirection: "row",

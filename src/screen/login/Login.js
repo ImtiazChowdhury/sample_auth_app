@@ -13,10 +13,7 @@ import { loginUser } from '../../store/authSlice'
 
 function LoginScreen() {
     const dispatch = useDispatch();
-    const { handleChange, formData, loading, setLoading, errors, setErrors } = useForm({
-        username: "John",
-        password: "1234"
-    })
+    const { handleChange, formData, loading, setLoading, errors, setErrors } = useForm()
 
     const handleSubmit = useCallback(async () => {
         setErrors({});
@@ -31,6 +28,7 @@ function LoginScreen() {
         if (validationErrors) {
             setErrors(validationErrors)
             setLoading(false)
+            return;
         }
         try {
             const loginResponse = await loginApi(payload);
