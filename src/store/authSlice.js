@@ -19,14 +19,18 @@ export const authSlice = createSlice({
         logoutUser: (state) => {
             state.userDetail = null;
             state.isLoggedIn = false;
+            state.image = [];
         },
         addImage: (state, action) => {
             state.image = [...(state.image || []), ...action.payload]
         },
+        resetImage: (state) => {
+            state.image = []
+        }
     },
 })
 
-export const { loginUser, logoutUser, addImage } = authSlice.actions
+export const { loginUser, logoutUser, addImage, resetImage } = authSlice.actions
 
 export const selectIsLoggedIn = (state) => state.auth.isLoggedIn;
 export const selectUserDetail = (state) => state.auth.userDetail;
